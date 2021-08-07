@@ -20,7 +20,7 @@ const BillGatesBooks = Book[
 ]
 
 function billgatesbooks()
-  json(:books, :billgatesbooks, books = BooksController.BillGatesBooks)
+    json(:books, :billgatesbooks, books = BooksController.BillGatesBooks)
 end
 
 # function billgatesbooks()
