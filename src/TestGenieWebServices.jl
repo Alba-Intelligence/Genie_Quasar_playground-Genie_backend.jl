@@ -1,4 +1,4 @@
-module TestGenieWebSewrvices
+module TestGenieWebServices
 
 using Genie, Logging, LoggingExtras
 
