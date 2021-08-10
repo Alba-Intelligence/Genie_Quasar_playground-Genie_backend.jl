@@ -1,6 +1,6 @@
-name = "TestGenieWebServices"
+name = "Indexity_TestGenieWebServices"
 uuid = "1bbd3e64-528f-4723-8347-f1366bb079a1"
-authors = ["Emmanuel-R8 <emmanuel.rialland@gmail.com>"]
+authors = ["Emmanuel Rialland <Alba.Intelligence@gmail.com>"]
 version = "0.1.0"
 
 [deps]

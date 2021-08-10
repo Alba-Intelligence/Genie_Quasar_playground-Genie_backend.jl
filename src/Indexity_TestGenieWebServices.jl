@@ -1,4 +1,4 @@
-module TestGenieWebServices
+module Indexity_TestGenieWebServices
 
 using Genie, Logging, LoggingExtras
 

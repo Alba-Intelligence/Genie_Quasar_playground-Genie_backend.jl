@@ -78,18 +78,28 @@ function creditdata!(data::DataFrame, model::M) where {M<:Stipple.ReactiveModel}
 end
 
 function bignumbers!(data::DataFrame, model::M) where {M<:ReactiveModel}
-    model.big_numbers_count_good_credits[] = data[data.Good_Rating.==true, [:Good_Rating]] |> nrow
-    model.big_numbers_count_bad_credits[] = data[data.Good_Rating.==false, [:Good_Rating]] |> nrow
-    model.big_numbers_amount_good_credits[] = data[data.Good_Rating.==true, [:Amount]] |> Array |> sum
-    model.big_numbers_amount_bad_credits[] = data[data.Good_Rating.==false, [:Amount]] |> Array |> sum
+    model.big_numbers_count_good_credits[] =
+        data[data.Good_Rating.==true, [:Good_Rating]] |> nrow
+    model.big_numbers_count_bad_credits[] =
+        data[data.Good_Rating.==false, [:Good_Rating]] |> nrow
+    model.big_numbers_amount_good_credits[] =
+        data[data.Good_Rating.==true, [:Amount]] |> Array |> sum
+    model.big_numbers_amount_bad_credits[] =
+        data[data.Good_Rating.==false, [:Amount]] |> Array |> sum
 end
 
 function barstats!(data::DataFrame, model::M) where {M<:Stipple.ReactiveModel}
     age_stats = Dict{Symbol,Vector{Int}}(:good_credit => Int[], :bad_credit => Int[])
 
     for x = 20:10:70
-        push!(age_stats[:good_credit], data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==true), [:Good_Rating]] |> nrow)
-        push!(age_stats[:bad_credit], data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==false), [:Good_Rating]] |> nrow)
+        push!(
+            age_stats[:good_credit],
+            data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==true), [:Good_Rating]] |> nrow,
+        )
+        push!(
+            age_stats[:bad_credit],
+            data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==false), [:Good_Rating]] |> nrow,
+        )
     end
 
     model.bar_plot_data[] = [
@@ -129,7 +139,13 @@ gc_model = setmodel(data, Dashboard1()) |> Stipple.init
 
 function filterdata!(model::Dashboard1)
     model.credit_data_loading[] = true
-    model = setmodel(data[(model.range_data[].range.start.<=data[:Age].<=model.range_data[].range.stop), :], model)
+    model = setmodel(
+        data[
+            (model.range_data[].range.start.<=data[:Age].<=model.range_data[].range.stop),
+            :,
+        ],
+        model,
+    )
     model.credit_data_loading[] = false
 
     return nothing
@@ -246,7 +262,10 @@ function ui(model)
                         ],
                     ),
                 ])
-                footer(class = "st-footer q-pa-md", [cell([span("Stipple &copy; $(year(now()))")])])
+                footer(
+                    class = "st-footer q-pa-md",
+                    [cell([span("Stipple &copy; $(year(now()))")])],
+                )
             ],
         ),
     ]
@@ -261,4 +280,3 @@ end
 route("/germancredits") do
     ui(gc_model) |> html
 end
-

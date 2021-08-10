@@ -3,8 +3,6 @@
 #
 using Genie, Genie.Router, Genie.Renderer.Json, Genie.Requests
 
-using SearchLightSQLite
-
 
 #
 # Default Hello page
@@ -20,40 +18,60 @@ route("/echo", method = POST) do
 end
 
 
-using HTTP
-route("/send") do
-    response = HTTP.request(
-        "POST",
-        "http://localhost:$(server_port)/json/echo",
-        [("Content-Type", "application/json")],
-        """{"message":"hello", "repeat":3}""",
-    )
+# using HTTP
+# route("/send") do
+#     response = HTTP.request(
+#         "POST",
+#         "http://localhost:$(server_port)/json/echo",
+#         [("Content-Type", "application/json")],
+#         """{"message":"hello", "repeat":3}""",
+#     )
 
-    response.body |> String |> json
-end
-
-
-
-using Genie.Renderer.Html
-using FileIO, Images, ImageMagick, Base64
-
-route("/randomimage") do
-    randimage = rand(RGB, 1000, 1000)
-    buffer = Base.IOBuffer()
-    ImageMagick.save(Stream(format"PNG", buffer), randimage)
-    data = base64encode(take!(buffer))
-    close(buffer)
-    html("""<img src="data:image/pmg;base64,$(data)">""")
-
-end
+#     response.body |> String |> json
+# end
 
 
 
-#
-# Load the controller BooksController
-#
-using BooksController
+# #
+# # Various "Hello World"'s
+# #
+# using Genie.Renderer.Html
+# route("/hello.html") do
+#     html("Hello World")
+# end
 
-route("/bgbooks", BooksController.billgatesbooks)
-route("/api/v1/bgbooks", BooksController.API.billgatesbooks)
+# route("/hello.json") do
+#     json("Hello World")
+# end
 
+# route("/hello.txt") do
+#     respond("Hello World", :text)
+# end
+
+
+
+# using Genie.Renderer.Html
+# using FileIO, Images, ImageMagick, Base64
+
+# route("/randomimage") do
+#     randimage = rand(RGB, 1000, 1000)
+#     buffer = Base.IOBuffer()
+#     ImageMagick.save(Stream(format"PNG", buffer), randimage)
+#     data = base64encode(take!(buffer))
+#     close(buffer)
+#     html("""<img src="data:image/pmg;base64,$(data)">""")
+
+# end
+
+
+
+# #
+# # Load the controller BooksController
+# #
+# # using SearchLightSQLite
+
+# # include("app/resources/books/BooksController.jl")
+# # using BooksController
+
+# # route("/bgbooks", BooksController.billgatesbooks)
+# # route("/api/v1/bgbooks", BooksController.API.billgatesbooks)
