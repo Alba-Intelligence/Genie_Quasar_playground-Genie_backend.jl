@@ -1,5 +1,5 @@
 #
-# Automatically created in scratchpad
+# Skeleton created in scratchpad
 # Genie.newcontroller("Books")
 #
 module BooksController
@@ -20,11 +20,13 @@ const BillGatesBooks = Book[
 ]
 
 function billgatesbooks()
-    json(:books, :billgatesbooks, books = BooksController.BillGatesBooks)
+    # json(resource, action, )
+    json(:books, :billgatesbooks; books = BooksController.BillGatesBooks)
 end
 
+
 # function billgatesbooks()
-#     html(:books, :billgatesbooks, layout = :admin, books = BillGatesBooks)
+#     html(:books, :billgatesbooks; layout = :admin, books = BillGatesBooks)
 # end
 
 
@@ -40,6 +42,6 @@ function billgatesbooks()
     json(BooksController.BillGatesBooks)
 end
 
-end
+end # end module API
 
-end
+end # end module BooksController

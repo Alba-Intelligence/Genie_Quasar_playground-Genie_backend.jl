@@ -1,5 +1,5 @@
 #
-# START THE SERVER FROM COMAND LINE "julia start_rest.jl"
+# START THE SERVER FROM COMAND LINE "julia bin/start_rest.jl" or "julia bootstrap.jl"
 #
 using Genie, Genie.Router, Genie.Renderer.Json, Genie.Requests
 
@@ -24,7 +24,7 @@ using HTTP
 route("/send") do
     response = HTTP.request(
         "POST",
-        "http://localhost:8000/json/echo",
+        "http://localhost:$(server_port)/json/echo",
         [("Content-Type", "application/json")],
         """{"message":"hello", "repeat":3}""",
     )
@@ -48,6 +48,7 @@ route("/randomimage") do
 end
 
 
+
 #
 # Load the controller BooksController
 #
@@ -55,3 +56,4 @@ using BooksController
 
 route("/bgbooks", BooksController.billgatesbooks)
 route("/api/v1/bgbooks", BooksController.API.billgatesbooks)
+

@@ -6,7 +6,6 @@ docs/build
 log/*
 sessions/*
 !*.gitkeep
-Manifest.toml
 
 # Vagrant
 .vagrant
@@ -40,3 +39,6 @@ Thumbs.db
 
 # NPM packages folder.
 node_modules/
+
+# Julia files
+Manifest.toml

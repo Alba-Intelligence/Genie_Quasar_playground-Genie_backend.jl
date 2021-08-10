@@ -25,4 +25,5 @@ function seed()
     end
 end
 
-end
+end # end module Books
+

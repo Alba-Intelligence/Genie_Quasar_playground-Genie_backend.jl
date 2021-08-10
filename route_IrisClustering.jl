@@ -6,8 +6,8 @@ using Clustering
 import RDatasets: dataset
 import DataFrames
 
-#= Data =#
 
+#= Data =#
 data = DataFrames.insertcols!(dataset("datasets", "iris"), :Cluster => zeros(Int, 150))
 
 Base.@kwdef mutable struct IrisModel <: ReactiveModel
@@ -123,7 +123,3 @@ end
 route("/iris") do
     ui(ic_model) |> html
 end
-
-#= start server =#
-
-# up(rand((8000:9000)), open_browser = true)

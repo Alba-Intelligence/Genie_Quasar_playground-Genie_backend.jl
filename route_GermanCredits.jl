@@ -73,33 +73,23 @@ end
 
 
 # functions
-function creditdata(data::DataFrame, model::M) where {M<:Stipple.ReactiveModel}
+function creditdata!(data::DataFrame, model::M) where {M<:Stipple.ReactiveModel}
     model.credit_data[] = DataTable(data, data_opts)
 end
 
-function bignumbers(data::DataFrame, model::M) where {M<:ReactiveModel}
-    model.big_numbers_count_good_credits[] =
-        data[data.Good_Rating.==true, [:Good_Rating]] |> nrow
-    model.big_numbers_count_bad_credits[] =
-        data[data.Good_Rating.==false, [:Good_Rating]] |> nrow
-    model.big_numbers_amount_good_credits[] =
-        data[data.Good_Rating.==true, [:Amount]] |> Array |> sum
-    model.big_numbers_amount_bad_credits[] =
-        data[data.Good_Rating.==false, [:Amount]] |> Array |> sum
+function bignumbers!(data::DataFrame, model::M) where {M<:ReactiveModel}
+    model.big_numbers_count_good_credits[] = data[data.Good_Rating.==true, [:Good_Rating]] |> nrow
+    model.big_numbers_count_bad_credits[] = data[data.Good_Rating.==false, [:Good_Rating]] |> nrow
+    model.big_numbers_amount_good_credits[] = data[data.Good_Rating.==true, [:Amount]] |> Array |> sum
+    model.big_numbers_amount_bad_credits[] = data[data.Good_Rating.==false, [:Amount]] |> Array |> sum
 end
 
-function barstats(data::DataFrame, model::M) where {M<:Stipple.ReactiveModel}
+function barstats!(data::DataFrame, model::M) where {M<:Stipple.ReactiveModel}
     age_stats = Dict{Symbol,Vector{Int}}(:good_credit => Int[], :bad_credit => Int[])
 
     for x = 20:10:70
-        push!(
-            age_stats[:good_credit],
-            data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==true), [:Good_Rating]] |> nrow,
-        )
-        push!(
-            age_stats[:bad_credit],
-            data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==false), [:Good_Rating]] |> nrow,
-        )
+        push!(age_stats[:good_credit], data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==true), [:Good_Rating]] |> nrow)
+        push!(age_stats[:bad_credit], data[(data.Age.∈[x:x+10]).&(data.Good_Rating.==false), [:Good_Rating]] |> nrow)
     end
 
     model.bar_plot_data[] = [
@@ -108,7 +98,7 @@ function barstats(data::DataFrame, model::M) where {M<:Stipple.ReactiveModel}
     ]
 end
 
-function bubblestats(data::DataFrame, model::M) where {M<:ReactiveModel}
+function bubblestats!(data::DataFrame, model::M) where {M<:ReactiveModel}
     selected_columns = [:Age, :Amount, :Duration]
     credit_stats = Dict{Symbol,DataFrame}()
 
@@ -122,13 +112,13 @@ function bubblestats(data::DataFrame, model::M) where {M<:ReactiveModel}
 end
 
 function setmodel(data::DataFrame, model::M)::M where {M<:ReactiveModel}
-    creditdata(data, model)
-    bignumbers(data, model)
+    creditdata!(data, model)
+    bignumbers!(data, model)
 
-    barstats(data, model)
-    bubblestats(data, model)
+    barstats!(data, model)
+    bubblestats!(data, model)
 
-    model
+    return model
 end
 
 
@@ -137,22 +127,16 @@ Stipple.register_components(Dashboard1, StippleCharts.COMPONENTS)
 
 gc_model = setmodel(data, Dashboard1()) |> Stipple.init
 
-function filterdata(model::Dashboard1)
+function filterdata!(model::Dashboard1)
     model.credit_data_loading[] = true
-    model = setmodel(
-        data[
-            (model.range_data[].range.start.<=data[:Age].<=model.range_data[].range.stop),
-            :,
-        ],
-        model,
-    )
+    model = setmodel(data[(model.range_data[].range.start.<=data[:Age].<=model.range_data[].range.stop), :], model)
     model.credit_data_loading[] = false
 
-    nothing
+    return nothing
 end
 
 function ui(model)
-    [
+    return [
         dashboard(
             vm(model),
             title = "German Credits",
@@ -262,10 +246,7 @@ function ui(model)
                         ],
                     ),
                 ])
-                footer(
-                    class = "st-footer q-pa-md",
-                    [cell([span("Stipple &copy; $(year(now()))")])],
-                )
+                footer(class = "st-footer q-pa-md", [cell([span("Stipple &copy; $(year(now()))")])])
             ],
         ),
     ]
@@ -273,7 +254,7 @@ end
 
 # handlers
 on(gc_model.range_data) do _
-    filterdata(gc_model)
+    filterdata!(gc_model)
 end
 
 # routes
@@ -281,4 +262,3 @@ route("/germancredits") do
     ui(gc_model) |> html
 end
 
-# up(rand((8000:9000)), open_browser=true)
