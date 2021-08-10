@@ -1,7 +1,8 @@
 #
 # START THE SERVER FROM COMAND LINE "julia bin/start_rest.jl" or "julia bootstrap.jl"
 #
-using Genie, Genie.Router, Genie.Renderer.Json, Genie.Requests
+using Genie, Genie.Router
+using Genie.Renderer, Genie.Renderer.Json, Genie.Requests
 
 
 #
@@ -18,60 +19,89 @@ route("/echo", method = POST) do
 end
 
 
-# using HTTP
-# route("/send") do
-#     response = HTTP.request(
-#         "POST",
-#         "http://localhost:$(server_port)/json/echo",
-#         [("Content-Type", "application/json")],
-#         """{"message":"hello", "repeat":3}""",
-#     )
+using HTTP
+route("/send") do
+    response = HTTP.request(
+        "POST",
+        # "http://$(Genie.config.server_host):$(Genie.config.server_port)/echo",
+        "http://localhost:9009/echo",
+        [("Content-Type", "application/json")],
+        """{"message":"hello", "repeat":3}""",
+    )
 
-#     response.body |> String |> json
-# end
-
-
-
-# #
-# # Various "Hello World"'s
-# #
-# using Genie.Renderer.Html
-# route("/hello.html") do
-#     html("Hello World")
-# end
-
-# route("/hello.json") do
-#     json("Hello World")
-# end
-
-# route("/hello.txt") do
-#     respond("Hello World", :text)
-# end
+    response.body |> String |> json
+end
 
 
 
-# using Genie.Renderer.Html
-# using FileIO, Images, ImageMagick, Base64
+#
+# Various "Hello World"'s
+#
+using Genie.Renderer.Html
+route("/hello.html") do
+    html("Hello World")
+end
 
-# route("/randomimage") do
-#     randimage = rand(RGB, 1000, 1000)
-#     buffer = Base.IOBuffer()
-#     ImageMagick.save(Stream(format"PNG", buffer), randimage)
-#     data = base64encode(take!(buffer))
-#     close(buffer)
-#     html("""<img src="data:image/pmg;base64,$(data)">""")
-
-# end
+using Genie.Renderer.Json
+route("/hello.json") do
+    json("Hello World")
+end
 
 
+# This requires the generic Genie.Renderer
+route("/hello.txt") do
+    Genie.Renderer.respond("Hello World", :text)
+end
 
-# #
-# # Load the controller BooksController
-# #
-# # using SearchLightSQLite
 
-# # include("app/resources/books/BooksController.jl")
-# # using BooksController
+#
+# Completely random raster image encoded as PNG Base 64
+#
+using FileIO, Images, ImageMagick, Base64, Pipe
+route("/randomimage") do
+    buffer = Base.IOBuffer()
+    @pipe rand(RGB, 1000, 1000) |> ImageMagick.save(Stream(format"PNG", buffer), _)
+    data = buffer |> take! |> base64encode
+    close(buffer)
 
-# # route("/bgbooks", BooksController.billgatesbooks)
-# # route("/api/v1/bgbooks", BooksController.API.billgatesbooks)
+    html("""<img src="data:image/pmg;base64,$(data)">""")
+end
+
+
+
+
+#
+# Contour plot prepared by PlotlyJS, returned as a fully functional html page by the API
+#
+using Plots
+route("/contour") do
+    plotlyjs()
+    # create a plot with 3 subplots - No layout
+    default(legend = false)
+
+    x = y = range(-5, 5, length = 50)
+    f(x, y) = sin(x + 10sin(π / 3)) + cos(y)
+
+    plot_contour = plot(x, y, f, st = :contourf)
+
+    Plots.embeddable_html(plot_contour)
+end
+
+
+
+#
+# 3D surface plot prepared by PlotlyJS, returned as a fully functional html page by the API
+#
+using Plots
+route("/surface3d") do
+    plotlyjs()
+    # create a plot with 3 subplots - No layout
+    default(legend = false)
+
+    x = y = range(-5, 5, length = 50)
+    f(x, y) = sin(x + 10sin(π / 3)) + cos(y)
+
+    plot_surface = plot(x, y, f, st = :surface)
+
+    Plots.embeddable_html(plot_surface)
+end
