@@ -23,8 +23,7 @@ using HTTP
 route("/send") do
     response = HTTP.request(
         "POST",
-        # "http://$(Genie.config.server_host):$(Genie.config.server_port)/echo",
-        "http://localhost:9009/echo",
+        "http://$(Genie.config.server_host):$(Genie.config.server_port)/echo",
         [("Content-Type", "application/json")],
         """{"message":"hello", "repeat":3}""",
     )
@@ -60,7 +59,7 @@ end
 using FileIO, Images, ImageMagick, Base64, Pipe
 route("/randomimage") do
     buffer = Base.IOBuffer()
-    @pipe rand(RGB, 1000, 1000) |> ImageMagick.save(Stream(format"PNG", buffer), _)
+    @pipe rand(RGB, 640, 480) |> ImageMagick.save(Stream(format"PNG", buffer), _)
     data = buffer |> take! |> base64encode
     close(buffer)
 
@@ -72,8 +71,9 @@ end
 
 #
 # Contour plot prepared by PlotlyJS, returned as a fully functional html page by the API
+# This uses NO temporary file.
 #
-using Plots
+using Plots, PlotlyJS
 route("/contour") do
     plotlyjs()
     # create a plot with 3 subplots - No layout
@@ -82,8 +82,9 @@ route("/contour") do
     x = y = range(-5, 5, length = 50)
     f(x, y) = sin(x + 10sin(π / 3)) + cos(y)
 
-    plot_contour = plot(x, y, f, st = :contourf)
+    plot_contour = Plots.plot(x, y, f, st = :contourf)
 
+    # PlotlyJS is required for this method to be available.
     Plots.embeddable_html(plot_contour)
 end
 
@@ -92,7 +93,7 @@ end
 #
 # 3D surface plot prepared by PlotlyJS, returned as a fully functional html page by the API
 #
-using Plots
+using Plots, PlotlyJS
 route("/surface3d") do
     plotlyjs()
     # create a plot with 3 subplots - No layout
@@ -101,7 +102,7 @@ route("/surface3d") do
     x = y = range(-5, 5, length = 50)
     f(x, y) = sin(x + 10sin(π / 3)) + cos(y)
 
-    plot_surface = plot(x, y, f, st = :surface)
+    plot_surface = Plots.plot(x, y, f, st = :surface)
 
     # Origin = https://github.com/JuliaPlots/Plots.jl/blob/master/src/backends/plotlyjs.jl
     Plots.embeddable_html(plot_surface)

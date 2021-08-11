@@ -42,3 +42,5 @@ node_modules/
 
 # Julia files
 Manifest.toml
+scratchpad.jl
+

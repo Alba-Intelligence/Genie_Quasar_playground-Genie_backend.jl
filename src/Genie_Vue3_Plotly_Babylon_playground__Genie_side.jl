@@ -1,4 +1,4 @@
-module Indexity_TestGenieWebServices
+module Genie_Vue3_Plotly_Babylon_playground__Genie_side
 
 using Genie, Logging, LoggingExtras
 

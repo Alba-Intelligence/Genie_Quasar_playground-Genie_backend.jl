@@ -1,6 +1,6 @@
-name = "Indexity_TestGenieWebServices"
+name = "Genie_Vue3_Plotly_Babylon_playground__Genie_side"
 uuid = "1bbd3e64-528f-4723-8347-f1366bb079a1"
-authors = ["Emmanuel Rialland <Alba.Intelligence@gmail.com>"]
+authors = ["Alba Intelligence <Alba.Intelligence@gmail.com>"]
 version = "0.1.0"
 
 [deps]
