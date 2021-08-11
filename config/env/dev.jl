@@ -1,10 +1,13 @@
 using Genie.Configuration, Logging
 
 const config = Settings(
-    server_port = 8000,
+    server_port = 9009,
     server_host = "127.0.0.1",
-    log_level = Logging.Info,
-    log_to_file = false,
+
+    # After checking the logging initializer
+    path_log = "log",
+    log_to_file = true,
+    log_level = Logging.BelowMinLevel,
     server_handle_static_files = true,
 )
 

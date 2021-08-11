@@ -1,9 +1,10 @@
 #
 # DO NOT MODIFY
 #
-pwd() == joinpath(@__DIR__, "bin") && cd(@__DIR__) # allow starting app from bin/ dir
 
-using TestGenieWebServices
-TestGenieWebServices.main()
+# If started from bin, move back up to the module top directory @__DIR__
+pwd() == joinpath(@__DIR__, "bin") && cd(@__DIR__)
 
-up(9009, "localhost")
+using Indexity_TestGenieWebServices
+# This is executed only ONCE
+Indexity_TestGenieWebServices.main()

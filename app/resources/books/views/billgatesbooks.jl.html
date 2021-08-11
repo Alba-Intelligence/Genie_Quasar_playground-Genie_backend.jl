@@ -1,8 +1,0 @@
-<!-- billgatesbooks.jl.html -->
-<h1>Bill Gates' top $(length(books)) recommended books</h1>
-<ul>
-  <% @foreach(books) do book %>
-    <li>$(book.title) by $(book.author)</li>
-  <% end %>
-</ul>
-
